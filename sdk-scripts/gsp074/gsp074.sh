@@ -11,7 +11,7 @@ gcloud config set compute/region $REGION
 
 gsutil mb gs://$PROJECT_ID
 
-# curl https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Ada_Lovelace_portrait.jpg/800px-Ada_Lovelace_portrait.jpg --output ada.jpg
+# curl https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Ada_Lovelace_portrait.jpg/800px-Ada_Lovelace_portrait.jpg --output ./gsp074/ada.jpg
 
 gsutil cp ./gsp074/ada.jpg gs://$PROJECT_ID
 

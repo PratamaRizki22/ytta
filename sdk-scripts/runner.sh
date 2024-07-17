@@ -1,32 +1,35 @@
-BLACK=`tput setaf 0`
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-YELLOW=`tput setaf 3`
-BLUE=`tput setaf 4`
-MAGENTA=`tput setaf 5`
-CYAN=`tput setaf 6`
-WHITE=`tput setaf 7`
+#!/bin/bash
 
-BG_BLACK=`tput setab 0`
-BG_RED=`tput setab 1`
-BG_GREEN=`tput setab 2`
-BG_YELLOW=`tput setab 3`
-BG_BLUE=`tput setab 4`
-BG_MAGENTA=`tput setab 5`
-BG_CYAN=`tput setab 6`
-BG_WHITE=`tput setab 7`
+export BLACK=`tput setaf 0`
+export RED=`tput setaf 1`
+export GREEN=`tput setaf 2`
+export YELLOW=`tput setaf 3`
+export BLUE=`tput setaf 4`
+export MAGENTA=`tput setaf 5`
+export CYAN=`tput setaf 6`
+export WHITE=`tput setaf 7`
 
-BOLD=`tput bold`
-RESET=`tput sgr0`
+export BG_BLACK=`tput setab 0`
+export BG_RED=`tput setab 1`
+export BG_GREEN=`tput setab 2`
+export BG_YELLOW=`tput setab 3`
+export BG_BLUE=`tput setab 4`
+export BG_MAGENTA=`tput setab 5`
+export BG_CYAN=`tput setab 6`
+export BG_WHITE=`tput setab 7`
 
-# Automation for Login, Accept Terms and Condition, Proggress Checker
-# node browser-automation.js &                                    # if NodeJS installed in Linux System
-"/mnt/c/Program Files/nodejs/node.exe" browser-automation.js &    # If NodeJS installed in Windows, set to your path
+export BOLD=`tput bold`
+export RESET=`tput sgr0`
 
-gcloud init --skip-diagnostics                                    # SDK Login Command
+# If NodeJS is installed on the system where you run the script, use this
+# node browser-automation.js &
 
-# Manual Accept Terms and Conditions if you can't run browser automation
-# python3 -m webbrowser https://console.cloud.google.com/terms/cloud
+# If NodeJS is installed on Windows but you're using WSL to run the script, ensure it's set to your path.
+"/mnt/c/Program Files/nodejs/node.exe" browser-automation.js &
+
+
+# Initializing Google Cloud SDK
+gcloud init --skip-diagnostics
 
 # Declare Lab Variables
 while IFS='=' read -ra line; do
@@ -36,8 +39,7 @@ while IFS='=' read -ra line; do
     export "$key"
 done < variables.txt 
 
-
-# Change labID
-LABID=gsp016
+# REPlACE WITH YOUR LAB ID
+LABID=""   # example => gsp016
 
 ./${LABID}/${LABID}.sh
