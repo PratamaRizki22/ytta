@@ -21,25 +21,32 @@ export BG_WHITE=`tput setab 7`
 export BOLD=`tput bold`
 export RESET=`tput sgr0`
 
-# If NodeJS is installed on the system where you run the script, use this
-# node browser-automation.js &
+# CLEAR ALL SESSION
+gcloud auth revoke --all
 
-# If NodeJS is installed on Windows but you're using WSL to run the script, ensure it's set to your path.
-"/mnt/c/Program Files/nodejs/node.exe" browser-automation.js &
+# Use this If NodeJS is installed on the system where you run the script
+node browser-automation.js &
+
+# Use this If NodeJS is installed on Windows but you're using WSL to run the script.
+# Please ensure it's set to your NodeJS path.
+# "/mnt/c/Program Files (x86)/nodejs/node.exe" browser-automation.js &
 
 
-# Initializing Google Cloud SDK
-gcloud init --skip-diagnostics
+# INITIALIZING GOOGLE CLOUD SDK 
+./autoinit.sh       # Disable this if your system doesn't support "expect" command
 
-# Declare Lab Variables
+# If your system doesn't support expect, use this instead to manualy initializing Google Cloud SDK.
+# gcloud init --skip-diagnostics
+
+# DECLARE VARIABLES
 while IFS='=' read -ra line; do
     key=${line[0]}
     value=${line[1]}
     declare "$key"="$value"
     export "$key"
-done < variables.txt 
+done < tmp/variables.txt
 
 # REPlACE WITH YOUR LAB ID
 LABID=""   # example => gsp016
 
-./${LABID}/${LABID}.sh
+./labs/${LABID}/${LABID}.sh

@@ -1,12 +1,9 @@
-const fs = require("fs");
-const { chromium } = require("playwright");
-
 /** ========================================================================================================
  *  ----------------------------------- EDIT THE VARIABLES BELOW -------------------------------------------
  *  ------------ PLEASE ENSURE to SET THE LAB URI and VARIABLES before running the scripts!!! --------------
  *  ======================================================================================================== */
 
-const labURI = ""; // example => "https://cloudskillsboost.google/games/5156/labs/33678"
+const labURI = ''; // example => "https://cloudskillsboost.google/games/5156/labs/33678"
 const delayBeforeCheckLab = 15; // in seconds
 const variables = [
     // NEEDS TO BE CHANGED depending on the lab's requirements.
@@ -14,6 +11,9 @@ const variables = [
 ];
 
 /** =================================== END OF REQUIRED VARIABLES ========================================== */
+
+const fs = require('fs');
+const { chromium } = require('playwright');
 
 // BROWSER RUNNER
 let browserInstance = {};
@@ -25,14 +25,14 @@ const runner = async () => {
     storeVariables(resourceData, variables);
 
     // get Login Credentials
-    const { value: username } = labDetails.find(({ property }) => property === "username");
-    const { value: password } = labDetails.find(({ property }) => property === "password");
+    const { value: username } = labDetails.find(({ property }) => property === 'username');
+    const { value: password } = labDetails.find(({ property }) => property === 'password');
 
     // Console Login
     await consoleLogin({ browser, username, password });
-    await acceptTOS(browser); // required to enable Google Cloud API Library
+    await acceptTOS(browser); // required for enabling Google Cloud API Library
 
-    // LAB PROGRESS CHECKER
+    // Check Progress
     await delayed(delayBeforeCheckLab);
     await labPage.evaluate(labProgressChecker, {
         labID: labInstanceId,
@@ -45,7 +45,7 @@ const runner = async () => {
 
 // Connect to the browser you used to log in to the GCSB.
 const browserContext = async () => {
-    browserInstance = await chromium.connectOverCDP("http://localhost:9222");
+    browserInstance = await chromium.connectOverCDP('http://localhost:9222');
     const defaultContext = browserInstance.contexts()[0];
     defaultContext.setDefaultTimeout(1000 * 60 * 10); // 10 minutes
     return defaultContext;
@@ -87,31 +87,31 @@ const waitForResources = async (labPage) => {
 // Login into console and connect with GCloud SDK
 const consoleLogin = async ({ browser, username, password }) => {
     const consolePage = await waitForPage(browser, /v3\/signin\/identifier/);
-    const emailField = consolePage.locator("input[type=email]");
+    const emailField = consolePage.locator('input[type=email]');
     await emailField.waitFor();
     await emailField.fill(username);
-    await consolePage.locator("#identifierNext button[type=button]").click();
+    await consolePage.locator('#identifierNext button[type=button]').click();
 
-    const passwordField = consolePage.locator("#password input");
+    const passwordField = consolePage.locator('#password input');
     await passwordField.waitFor();
     await passwordField.fill(password);
-    await consolePage.locator("#passwordNext button[type=button]").click();
-    await consolePage.waitForEvent("load");
+    await consolePage.locator('#passwordNext button[type=button]').click();
+    await consolePage.waitForEvent('load');
 
     // I Understand
     if (!/signin\/oauth\/id/.test(consolePage.url())) {
-        const uBtn = consolePage.locator("#confirm");
+        const uBtn = consolePage.locator('#confirm');
         await uBtn.waitFor();
         await uBtn.click();
     }
 
     // Continue
-    const contBTN = consolePage.locator("button", { hasText: "Continue" });
+    const contBTN = consolePage.locator('button', { hasText: 'Continue' });
     await contBTN.waitFor();
     await contBTN.click();
 
     // Allow
-    const allowBtn = consolePage.locator("button", { hasText: "Allow" });
+    const allowBtn = consolePage.locator('button', { hasText: 'Allow' });
     await allowBtn.waitFor();
     await allowBtn.click();
 };
@@ -119,30 +119,37 @@ const consoleLogin = async ({ browser, username, password }) => {
 // Accept Terms and Condition
 const acceptTOS = async (browser) => {
     const termsPage = await browser.newPage();
-    await termsPage.goto("https://console.cloud.google.com/terms/cloud?pli=1&authuser=1&hl=en");
-    const wrapper = termsPage.locator("cfc-virtual-viewport");
+    await termsPage.goto('https://console.cloud.google.com/terms/cloud?pli=1&authuser=1&hl=en');
+    const wrapper = termsPage.locator('cfc-virtual-viewport');
     const pageTxt = await wrapper.textContent();
     if (/Click the button below/.test(pageTxt)) {
-        const acceptBtn = termsPage.locator("cfc-progress-button button");
+        const acceptBtn = termsPage.locator('cfc-progress-button button');
         await acceptBtn.click();
     }
 };
 
 // Store dynamic variables from the lab into environment variables.
 const storeVariables = (resourceData, varList = []) => {
-    if (varList.length < 1) return;
-    const variables = varList.map(({ var: str = "", prop = "" }) => {
-        const findVal = `.${prop}`.split(".").reduce((pv, curr, i) => {
+    // Storing Project ID
+    const { project_id } = resourceData.project_0;
+    writeFile('tmp/project_id.txt', project_id + '\n');
+
+    // Storing Lab Variables
+    const variables = varList.map(({ var: str = '', prop = '' }) => {
+        const findVal = `.${prop}`.split('.').reduce((pv, curr, i) => {
             const obj = pv || resourceData || {};
             const currentVal = obj[curr];
             return currentVal;
         });
         return `${str}=${findVal}`;
     });
-    const varResult = variables.join("\n") + "\n";
+    const project = `PROJECT_ID=${project_id}`;
+    const varResult = [project, ...variables].join('\n') + '\n';
+    writeFile('tmp/variables.txt', varResult);
+};
 
-    // Write Variables to File
-    fs.writeFile("variables.txt", varResult, "utf-8", (err) => {
+const writeFile = (filePath, content) => {
+    fs.writeFile(filePath, content, 'utf-8', (err) => {
         if (!err) return;
         console.log(err);
         throw err;
@@ -153,7 +160,7 @@ const storeVariables = (resourceData, varList = []) => {
 const labProgressChecker = async ({ labID, progress }) => {
     const checkLab = async () => {
         let assessmentInfo = progress || [];
-        console.log("%cVerifying..", "color:#00aaff;");
+        console.log('%cChecking Progress..', 'color:#00aaff;');
         const { step_complete = [] } = assessmentInfo;
 
         const steps = step_complete.map(async (isComplete, i) => {
@@ -170,7 +177,7 @@ const labProgressChecker = async ({ labID, progress }) => {
     };
 
     const checkStep = async (labInstanceId, step = 1) => {
-        const gcsb = "https://www.cloudskillsboost.google";
+        const gcsb = 'https://www.cloudskillsboost.google';
         const stepURL = `${gcsb}/assessments/run_step.json?id=${labInstanceId}&step=${step}&u=${Math.random()}`;
         const data = await fetch(stepURL);
         const { step_complete } = await data.json();
@@ -179,18 +186,18 @@ const labProgressChecker = async ({ labID, progress }) => {
     };
 
     // Checklis Progress
-    const trackerPanel = document.querySelectorAll("ql-activity-tracking");
+    const trackerPanel = document.querySelectorAll('ql-activity-tracking');
     const checkUI = (i) => {
-        const checkButton = trackerPanel[i].shadowRoot.querySelector("ql-button");
-        const btn = checkButton.shadowRoot.querySelector("button");
+        const checkButton = trackerPanel[i].shadowRoot.querySelector('ql-button');
+        const btn = checkButton.shadowRoot.querySelector('button');
         if (btn.disabled) return true;
         btn.click();
         return true;
     };
 
     const endLab = async () => {
-        const finalize = document.querySelector("#js-are-you-sure-button");
-        const finalizeButton = finalize.shadowRoot.querySelector("button");
+        const finalize = document.querySelector('#js-are-you-sure-button');
+        const finalizeButton = finalize.shadowRoot.querySelector('button');
         finalizeButton.click();
     };
 
@@ -200,9 +207,9 @@ const labProgressChecker = async ({ labID, progress }) => {
 // delay promise
 const delayed = (time) => {
     return new Promise((resolve, reject) => {
-        if (isNaN(time) || time < 1) return resolve("ok");
+        if (isNaN(time) || time < 1) return resolve('ok');
         const t = setTimeout(() => {
-            resolve("ok");
+            resolve('ok');
             clearTimeout(t);
         }, time * 1000);
     });

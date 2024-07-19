@@ -1,7 +1,7 @@
 # export REGION=
 
-export PROJECT_ID=$(gcloud projects list --format='value(PROJECT_ID)' \
-    --filter='qwiklabs-gcp')
+# export PROJECT_ID=$(gcloud projects list --format='value(PROJECT_ID)' \
+#     --filter='qwiklabs-gcp')
 
 gcloud services enable servicedirectory.googleapis.com
 
