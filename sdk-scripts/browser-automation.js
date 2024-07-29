@@ -5,6 +5,7 @@
 
 const labURI = ''; // example => "https://cloudskillsboost.google/games/5156/labs/33678"
 const delayBeforeCheckLab = 15; // in seconds
+const browserPORT = 9222; // Your Browser Debugging Port
 const variables = [
     // NEEDS TO BE CHANGED depending on the lab's requirements.
     // Find the required variable in VARIABLES.md or leave this array blank if the lab doesn't need one.
@@ -45,7 +46,7 @@ const runner = async () => {
 
 // Connect to the browser you used to log in to the GCSB.
 const browserContext = async () => {
-    browserInstance = await chromium.connectOverCDP('http://localhost:9222');
+    browserInstance = await chromium.connectOverCDP('http://localhost:' + browserPORT);
     const defaultContext = browserInstance.contexts()[0];
     defaultContext.setDefaultTimeout(1000 * 60 * 10); // 10 minutes
     return defaultContext;
@@ -87,6 +88,8 @@ const waitForResources = async (labPage) => {
 // Login into console and connect with GCloud SDK
 const consoleLogin = async ({ browser, username, password }) => {
     const consolePage = await waitForPage(browser, /v3\/signin\/identifier/);
+    const authKeyMode = /authcode.html/.test(consolePage.url());
+
     const emailField = consolePage.locator('input[type=email]');
     await emailField.waitFor();
     await emailField.fill(username);
@@ -114,6 +117,11 @@ const consoleLogin = async ({ browser, username, password }) => {
     const allowBtn = consolePage.locator('button', { hasText: 'Allow' });
     await allowBtn.waitFor();
     await allowBtn.click();
+
+    if (!authKeyMode) return;
+    const codeBlock = consolePage.locator('code.auth-code');
+    const authCode = await codeBlock.innerText();
+    writeFile('tmp/login_key.txt', authCode);
 };
 
 // Accept Terms and Condition
@@ -154,6 +162,11 @@ const writeFile = (filePath, content) => {
         console.log(err);
         throw err;
     });
+};
+
+const clearTMPFiles = () => {
+    const tmpFiles = ['project_id', 'login_key', 'variables'];
+    tmpFiles.forEach((f) => writeFile('tmp/' + f + '.txt', ''));
 };
 
 // Automatically check and end the lab, running in a browser instance rather than in a playwright/NodeJS environment.
@@ -215,4 +228,5 @@ const delayed = (time) => {
     });
 };
 
+clearTMPFiles();
 runner();
