@@ -3,6 +3,8 @@ echo "${YELLOW}${BOLD}Starting${RESET}" "${GREEN}${BOLD}Execution${RESET}"
 
 cd ./labs/gsp412
 
+gcloud config set project $PROJECT_ID
+
 bq mk ecommerce
 
 bq query --use_legacy_sql=false \

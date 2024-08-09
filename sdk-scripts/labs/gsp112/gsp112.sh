@@ -9,7 +9,7 @@ cd ../materials/python-docs-samples/appengine/standard_python3/hello_world
 
 # sed -i "s/python37/python39/g" app.yaml
 
-gcloud app create --region=$REGION
+gcloud app create --region=$REGION --project $PROJECT_ID
 
 # yes | gcloud app deploy
 
