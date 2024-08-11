@@ -5,11 +5,14 @@ cd ./labs/gsp412
 
 gcloud config set project $PROJECT_ID
 
+# ============================================== Task 1 ================================================
 bq mk ecommerce
 
+
+# ============================================ TASK 4 =================================================
+
 bq query --use_legacy_sql=false \
-"
-#standardSQL
+"#standardSQL
 # how many products are on the website?
 SELECT DISTINCT
 productSKU,
@@ -18,8 +21,7 @@ FROM \`data-to-insights.ecommerce.all_sessions_raw\`
 " &
 
 bq query --use_legacy_sql=false \
-"
-#standardSQL
+"#standardSQL
 # find the count of unique SKUs
 SELECT
 DISTINCT
@@ -56,8 +58,8 @@ ORDER BY product_count DESC
 bq query --use_legacy_sql=false \
 "
 SELECT DISTINCT
-v2ProductName,
-productSKU
+  v2ProductName,
+  productSKU
 FROM \`data-to-insights.ecommerce.all_sessions_raw\`
 WHERE productSKU = 'GGOEGPJC019099'
 " &
@@ -104,6 +106,9 @@ FROM inventory_per_sku
 GROUP BY productSKU
 " &
 
+./bigquery.sh &
+./bigquery.sh &
+./bigquery.sh
 ./bigquery.sh
 ./bigquery.sh
 ./bigquery.sh

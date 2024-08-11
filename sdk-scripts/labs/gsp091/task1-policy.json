@@ -1,0 +1,20 @@
+{
+    "displayName": "stopped vm",
+    "conditions": [
+        {
+            "displayName": "VM Instance - Stop Instance",
+            "conditionMatchedLog": {
+                "filter": "resource.type=\"gce_instance\" AND protoPayload.methodName=\"v1.compute.instances.stop\""
+            }
+        }
+    ],
+    "notificationChannels": ["projects/qwiklabs-gcp-04-5aaa0d0cb82e/notificationChannels/13989166698828473608"],
+    "combiner": "OR",
+    "enabled": true,
+    "alertStrategy": {
+        "notificationRateLimit": {
+            "period": "300s"
+        },
+        "autoClose": "3600s"
+    }
+}

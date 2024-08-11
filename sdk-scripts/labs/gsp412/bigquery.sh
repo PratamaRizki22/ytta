@@ -1,3 +1,5 @@
+# ============================== TASK 6 =======================
+
 bq query --use_legacy_sql=false \
 "
 SELECT
@@ -168,5 +170,4 @@ FROM \`data-to-insights.ecommerce.all_sessions_raw\` AS website
 CROSS JOIN ecommerce.site_wide_promotion
 WHERE v2ProductCategory LIKE '%Clearance%'
 AND productSKU = 'GGOEGOLC013299'
-" &
-wait
+"

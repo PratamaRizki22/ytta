@@ -1,0 +1,24 @@
+{
+    "displayName": "log based metric alert",
+    "conditions": [
+        {
+            "displayName": "metric alert",
+            "conditionThreshold": {
+                "filter": "resource.type=\"metric\" AND metric.type=\"logging.googleapis.com/user/hello-app-error\"",
+                "aggregations": [
+                    {
+                        "alignmentPeriod": "120s",
+                        "crossSeriesReducer": "REDUCE_NONE",
+                        "perSeriesAligner": "ALIGN_RATE"
+                    }
+                ],
+                "comparison": "COMPARISON_GT",
+                "thresholdValue": 1000,
+                "duration": "0s"
+            }
+        }
+    ],
+    "notificationChannels": ["projects/qwiklabs-gcp-04-5aaa0d0cb82e/notificationChannels/13989166698828473608"],
+    "combiner": "OR",
+    "enabled": true
+}
