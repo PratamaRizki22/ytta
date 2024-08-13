@@ -49,6 +49,7 @@ done < tmp/variables.txt
 # Define GCP Variables
 export GOOGLE_CLOUD_PROJECT=$PROJECT_ID
 export USER_EMAIL=$(gcloud auth list --format "value(ACCOUNT)")
+export USER_NAME=$(echo $USER_EMAIL | grep -oE "(student[-a-z0-9]+)")
 export GOOGLE_APPLICATION_CREDENTIALS="/home/aguzztn54/.config/gcloud/legacy_credentials/$USER_EMAIL/adc.json"
 gcloud config set project $PROJECT_ID
 

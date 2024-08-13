@@ -28,8 +28,8 @@ gcloud compute firewall-rules create allow-http --action=ALLOW \
 cd ./labs/gsp183
 
 run_command(){
-    # gcloud compute scp command.sh $USER@dev-instance:/tmp --project="$PROJECT_ID" --zone="$ZONE"
-    gcloud compute ssh $USER@dev-instance --project="$PROJECT_ID" --zone="$ZONE" --command=<<'EOF_END'
+    # gcloud compute scp command.sh $USER_NAME@dev-instance:/tmp --project="$PROJECT_ID" --zone="$ZONE"
+    gcloud compute ssh $USER_NAME@dev-instance --project="$PROJECT_ID" --zone="$ZONE" --command=<<'EOF_END'
 sudo apt-get update
 sudo apt-get install git -y
 sudo apt-get install python3-setuptools python3-dev build-essential -y

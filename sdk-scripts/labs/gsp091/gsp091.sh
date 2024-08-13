@@ -4,9 +4,10 @@ echo "${YELLOW}${BOLD}Starting${RESET}" "${GREEN}${BOLD}Execution${RESET}"
 
 
 cd ./labs/gsp091
-ecport ZONE=us-east1-c
-gcloud config set project $PROJECT_ID
-gcloud config set compute/zone us-east1-c
+
+export ZONE=us-east1-c
+
+gcloud config set compute/zone $ZONE
 
 ./task1-3-4.sh & ./task2-5.sh
 

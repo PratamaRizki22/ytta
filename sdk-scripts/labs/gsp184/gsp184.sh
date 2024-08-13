@@ -12,7 +12,7 @@ source vrenv/bin/activate
 
 export GCLOUD_PROJECT=$PROJECT_ID
 
-cp /home/aguzztn54/.config/gcloud/legacy_credentials/$USER_EMAIL/adc.json ./adc.json
+cp $GOOGLE_APPLICATION_CREDENTIALS ./adc.json
 
 gcloud app create --region $REGION --project $PROJECT_ID
 

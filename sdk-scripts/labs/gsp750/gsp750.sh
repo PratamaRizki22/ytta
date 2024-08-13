@@ -5,10 +5,6 @@ echo "${YELLOW}${BOLD}Starting${RESET}" "${GREEN}${BOLD}Execution${RESET}"
 cd ./labs/gsp750/terraform
 
 export REGION="${ZONE%-*}"
-export GOOGLE_CLOUD_PROJECT=$PROJECT_ID
-export GOOGLE_APPLICATION_CREDENTIALS=adc.json
-export USER_EMAIL=$(gcloud auth list --format "value(ACCOUNT)")
-cp /home/aguzztn54/.config/gcloud/legacy_credentials/$USER_EMAIL/adc.json ./adc.json
 
 cat  > main.tf <<EOF
 terraform {
