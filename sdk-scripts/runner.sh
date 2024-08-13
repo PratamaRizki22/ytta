@@ -8,7 +8,6 @@ export BLUE=`tput setaf 4`
 export MAGENTA=`tput setaf 5`
 export CYAN=`tput setaf 6`
 export WHITE=`tput setaf 7`
-
 export BG_BLACK=`tput setab 0`
 export BG_RED=`tput setab 1`
 export BG_GREEN=`tput setab 2`
@@ -17,7 +16,6 @@ export BG_BLUE=`tput setab 4`
 export BG_MAGENTA=`tput setab 5`
 export BG_CYAN=`tput setab 6`
 export BG_WHITE=`tput setab 7`
-
 export BOLD=`tput bold`
 export RESET=`tput sgr0`
 
@@ -29,11 +27,13 @@ node browser-automation.js &
 
 # Use this If NodeJS is installed on Windows but you're using WSL to run the script.
 # Please ensure it's set to your NodeJS path.
-# "/mnt/c/Program Files (x86)/nodejs/node.exe" browser-automation.js &
+# "/mnt/c/Program Files/nodejs/node.exe" browser-automation.js &
 
 
 # INITIALIZING GOOGLE CLOUD SDK 
-./autoinit.sh       # Disable this if your system doesn't support "expect" command
+# ./autoinit.sh       # Disable this if your system doesn't support "expect" command
+
+gcloud auth login   # Faster Initialization
 
 # If your system doesn't support expect, use this instead to manualy initializing Google Cloud SDK.
 # gcloud init --skip-diagnostics
@@ -45,6 +45,12 @@ while IFS='=' read -ra line; do
     declare "$key"="$value"
     export "$key"
 done < tmp/variables.txt
+
+# Define GCP Variables
+export GOOGLE_CLOUD_PROJECT=$PROJECT_ID
+export USER_EMAIL=$(gcloud auth list --format "value(ACCOUNT)")
+export GOOGLE_APPLICATION_CREDENTIALS="/home/aguzztn54/.config/gcloud/legacy_credentials/$USER_EMAIL/adc.json"
+gcloud config set project $PROJECT_ID
 
 # REPlACE WITH YOUR LAB ID
 LABID=""   # example => gsp016
