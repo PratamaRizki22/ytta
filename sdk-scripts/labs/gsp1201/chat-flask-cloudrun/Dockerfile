@@ -1,10 +1,11 @@
-FROM python:3.8
+# FROM python:3.8
+FROM crccheck/hello-world
 
-EXPOSE 8080
-WORKDIR /app
+# EXPOSE 8080
+# WORKDIR /app
 
-COPY . ./
+# COPY . ./
 
-RUN pip install -r requirements.txt
+# RUN pip install -r requirements.txt
 
-CMD ["python", "app.py"]
+# CMD ["python", "app.py"]
