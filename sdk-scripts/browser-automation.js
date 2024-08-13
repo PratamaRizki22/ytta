@@ -4,7 +4,7 @@
  *  ======================================================================================================== */
 
 const labURI = ''; // example => "https://cloudskillsboost.google/games/5156/labs/33678"
-const delayBeforeCheckLab = 15; // in seconds
+const delayBeforeCheckLab = 120; // in seconds
 const browserPORT = 9222; // Your Browser Debugging Port
 const variables = [
     // NEEDS TO BE CHANGED depending on the lab's requirements.
@@ -76,11 +76,11 @@ const waitForPage = (browser, uri) => {
 
 // Waiting for Lab Resources
 const waitForResources = async (labPage) => {
-    const resources = await labPage.waitForResponse(/focuses\/show/);
+    const resources = await labPage?.waitForResponse(/focuses\/show/);
     const data = await resources.json();
-    const { resourceData, labInstanceId, labDetails } = data;
-    const { provisioning, labControlButton, assessmentInfo } = data;
-    const isResourceReady = !provisioning && labControlButton.running;
+    const { resourceData, labInstanceId, labDetails } = data || {};
+    const { provisioning, labControlButton = {}, assessmentInfo } = data;
+    const isResourceReady = !provisioning && labControlButton?.running;
     if (!isResourceReady) return waitForResources();
     return { resourceData, labInstanceId, labDetails, assessmentInfo };
 };
@@ -139,8 +139,9 @@ const acceptTOS = async (browser) => {
 // Store dynamic variables from the lab into environment variables.
 const storeVariables = (resourceData, varList = []) => {
     // Storing Project ID
-    const { project_id } = resourceData.project_0;
-    writeFile('tmp/project_id.txt', project_id + '\n');
+    const { project_0, primary_project } = resourceData || {};
+    const { project_id } = project_0 || primary_project || {};
+    writeFile('tmp/project_id.txt', project_id);
 
     // Storing Lab Variables
     const variables = varList.map(({ var: str = '', prop = '' }) => {
@@ -171,8 +172,8 @@ const clearTMPFiles = () => {
 
 // Automatically check and end the lab, running in a browser instance rather than in a playwright/NodeJS environment.
 const labProgressChecker = async ({ labID, progress }) => {
+    let assessmentInfo = progress || [];
     const checkLab = async () => {
-        let assessmentInfo = progress || [];
         console.log('%cChecking Progress..', 'color:#00aaff;');
         const { step_complete = [] } = assessmentInfo;
 
@@ -182,9 +183,10 @@ const labProgressChecker = async ({ labID, progress }) => {
             if (justComplete) checkUI(i);
             return justComplete;
         });
-
         const checkResult = await Promise.all(steps);
+
         assessmentInfo = { step_complete: checkResult };
+        console.log(checkResult);
         if (checkResult.includes(false)) return checkLab();
         endLab();
     };
@@ -201,8 +203,9 @@ const labProgressChecker = async ({ labID, progress }) => {
     // Checklis Progress
     const trackerPanel = document.querySelectorAll('ql-activity-tracking');
     const checkUI = (i) => {
+        if (!trackerPanel[i]) return true;
         const checkButton = trackerPanel[i].shadowRoot.querySelector('ql-button');
-        const btn = checkButton.shadowRoot.querySelector('button');
+        const btn = checkButton?.shadowRoot.querySelector('button');
         if (btn.disabled) return true;
         btn.click();
         return true;
