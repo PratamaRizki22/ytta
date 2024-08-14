@@ -1,4 +1,3 @@
-> **PLEASE NOTE:** If you are unfamiliar with Google Cloud Platform environments or any of the required programming languages and tools below, please consider **NOT USING THIS**!
 > Because there's a lot of effort required to prepare your computer before you can run this tool properly, it's important to understand what you're doing first. Therefore, I highly recommend following the lab instructions and learning more for a better understanding.
 
 ## REQUIREMENT
